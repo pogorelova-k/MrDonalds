@@ -32,11 +32,6 @@ export function Topping({ toppings, checkToppings }) {
                         {item.name}
                     </ToppingLabel>
                 ))}
-                <ToppingLabel>
-                    <ToppingCheckbox type="checkbox"/>
-                    Бекон
-                </ToppingLabel>
-                
             </ToppingWrap>
         </>
     )
