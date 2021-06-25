@@ -50,7 +50,7 @@ const EmptyList = styled.p`
     text-align: center;
 `;
 
-export const Order = ({ orders }) => {
+export const Order = ({ orders, setOrders }) => {
     const total = orders.reduce((result, order) => 
         totalPriceItems(order) + result, 0)
 
