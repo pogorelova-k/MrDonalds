@@ -62,11 +62,11 @@ const TotalPriceItem = styled.div`
 `;
 
 export const ModalItem = ({ openItem, setOpenItem, orders, setOrders }) => {
-
-    const counter = useCount();
+    const counter = useCount(openItem.count);
     const toppings = useToppings(openItem);
     const choices = useChoices();
-
+    const isEdit = openItem.index > -1;
+    
     const order = {
         ...openItem,
         count: counter.count,
@@ -87,6 +87,14 @@ export const ModalItem = ({ openItem, setOpenItem, orders, setOrders }) => {
         setOpenItem(null);
     }
 
+    // редактирвоание заказа
+    const editOrder = () => {
+        const newOrders = [...orders];
+        newOrders[openItem.index] = order;
+        setOrders(newOrders);
+        setOpenItem(null);
+    }
+
     return (
         <Overlay id="overlay" onClick={closeModal}>
             <Modal>
@@ -104,9 +112,9 @@ export const ModalItem = ({ openItem, setOpenItem, orders, setOrders }) => {
                         <span>{formatCurrency(totalPriceItems(order))}</span>
                     </TotalPriceItem>
                     <ButtonCheckout 
-                        onClick={addToOrder}
+                        onClick={isEdit ? editOrder : addToOrder}
                         disabled={order.choices && !order.choice}
-                        >Добавить
+                        >{isEdit ? 'Редактировать' : 'Добавить'}
                     </ButtonCheckout>
                 </Content>
             </Modal>
