@@ -1,6 +1,7 @@
 import React from "react";
 import firebase from "firebase/app"; 
 import 'firebase/auth';
+import 'firebase/database';
 import { NavBar } from './Components/NavBar/NavBar';
 import { Menu } from './Components/Menu/Menu';
 import { GlobalStyle } from './Components/Style/GlobalStyle';
@@ -9,14 +10,16 @@ import { Order } from './Components/Order/Order';
 import { useOpenItem } from './Components/Hooks/useOpenItem';
 import { useOrders } from './Components/Hooks/useOrders';
 import { useAuth } from "./Components/Hooks/useAuth";
+import { useTitle } from "./Components/Hooks/useTitle";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB9IN0o_ZQ05iQBds4awW59heFgq5XB06U",
-  authDomain: "mrdonalds-a8d3d.firebaseapp.com",
-  projectId: "mrdonalds-a8d3d",
-  storageBucket: "mrdonalds-a8d3d.appspot.com",
-  messagingSenderId: "214785623935",
-  appId: "1:214785623935:web:806bbbea399330f0a17c4a"
+  apiKey: "AIzaSyAuAoYsTw4OKDWi6q4_hEtDtrfe0iGXt1Y",
+  authDomain: "mrdonalds-38ca5.firebaseapp.com",
+  databaseURL: "https://mrdonalds-38ca5-default-rtdb.firebaseio.com",
+  projectId: "mrdonalds-38ca5",
+  storageBucket: "mrdonalds-38ca5.appspot.com",
+  messagingSenderId: "787276047702",
+  appId: "1:787276047702:web:ea0be57f1b0d0e193f62f7"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -34,13 +37,19 @@ function App() {
   // authentication
   const auth = useAuth(firebase.auth);
 
+  const title = useTitle(openItem);
+
   return (
     <>
       <GlobalStyle/>
       <NavBar {...auth}/>
-      <Order {...orders} {...openItem} {...auth}/>
+      <Order 
+        {...orders} 
+        {...openItem} 
+        {...auth}
+        firebaseDatabase={firebase.database}/>
       <Menu {...openItem}/>
-      { openItem.openItem  && <ModalItem {...openItem} {...orders}/> }
+      { openItem.openItem  && <ModalItem {...openItem} {...orders} {...title}/> }
     </>
   );
 }

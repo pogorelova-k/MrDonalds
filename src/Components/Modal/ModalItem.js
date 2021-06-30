@@ -61,7 +61,7 @@ const TotalPriceItem = styled.div`
     justify-content: space-between;
 `;
 
-export const ModalItem = ({ openItem, setOpenItem, orders, setOrders }) => {
+export const ModalItem = ({ openItem, setOpenItem, orders, setOrders, title, setTitle }) => {
     const counter = useCount(openItem.count);
     const toppings = useToppings(openItem);
     const choices = useChoices();
@@ -96,7 +96,7 @@ export const ModalItem = ({ openItem, setOpenItem, orders, setOrders }) => {
     }
 
     return (
-        <Overlay id="overlay" onClick={closeModal}>
+        <Overlay id="overlay" onClick={closeModal}>          
             <Modal>
                 <Banner img={openItem.img}/>
                 <Content>

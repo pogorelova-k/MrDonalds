@@ -4,6 +4,7 @@ import { ButtonCheckout } from "../Button/ButtonCheckout";
 import { OrderListItem } from "./OrderListItem";
 import { totalPriceItems } from '../Functions/secondaryFunction';
 import { formatCurrency } from "../Functions/secondaryFunction";
+import { projection } from "../Functions/secondaryFunction";
 
 const OrderStyled = styled.section`
     position: fixed;
@@ -50,20 +51,42 @@ const EmptyList = styled.p`
     text-align: center;
 `;
 
-export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, logOut }) => {
+const rulesData = {
+    itemName: ['name'],
+    price: ['price'],
+    count: ['count'],
+    topping: ['topping', arr => arr.filter(obj => obj.checked).map(obj => obj.name), 
+                arr => arr.length ? arr : 'no toppings'],
+    choice: ['choice', item => item ? item : 'no choices'],
+}
+
+export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, firebaseDatabase}) => {
     const total = orders.reduce((result, order) => 
         totalPriceItems(order) + result, 0)
 
+    // общее количество товаров в заказе
     const totalCounter = orders.reduce((result, order) => 
         order.count + result, 0)
 
+    // Удаление заказа
     const deleteItem = (index) => {
         const newOrders = orders.filter((item, i) => 
             index !== i);
-        // const newOrders = [...orders];
-        // newOrders.splice(index, 1);
         setOrders(newOrders);
     };
+
+    const dataBase = firebaseDatabase();
+
+    // функция отправки заказа
+    const sendOrder = () => {
+        const newOrder = orders.map(projection(rulesData)); // заказ
+        dataBase.ref('orders').push().set({
+            nameClient: authentication.displayName,
+            email: authentication.email,
+            order: newOrder,
+        });
+        setOrders([]);
+    }
 
     return (
         <OrderStyled>
@@ -85,7 +108,7 @@ export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, l
                 <span>{totalCounter}</span>
                 <TotalPrice>{formatCurrency(total)}</TotalPrice>
             </Total>
-            <ButtonCheckout onClick={ authentication ? console.log(orders) : logIn}>Оформить</ButtonCheckout>
+            <ButtonCheckout onClick={() => authentication ? sendOrder() : logIn()}>Оформить</ButtonCheckout>
         </OrderStyled>
     )
 };
