@@ -2,8 +2,7 @@ import React, { useContext } from "react";
 import styled from 'styled-components';
 import { ButtonCheckout } from "../Button/ButtonCheckout";
 import { OrderListItem } from "./OrderListItem";
-import { totalPriceItems } from '../Functions/secondaryFunction';
-import { formatCurrency } from "../Functions/secondaryFunction";
+import { totalPriceItems, formatCurrency } from '../Functions/secondaryFunction';
 import { Context } from "../Functions/context";
 
 const OrderStyled = styled.section`
@@ -56,7 +55,6 @@ const EmptyList = styled.p`
 export const Order = () => {
 
     const {orders: { orders, setOrders },
-        openItem: { setOpenItem }, 
         auth: { authentication, logIn },
         orderConfirm: { setOpenOrderConfirm }} = useContext(Context);
     const total = orders.reduce((result, order) => 
@@ -83,17 +81,21 @@ export const Order = () => {
                         key={index}
                         order={order}
                         index={index}
-                        deleteItem={deleteItem}
-                        setOpenItem={setOpenItem}/>)}
+                        deleteItem={deleteItem}/>)}
                 </OrderList> : 
                 <EmptyList>Список заказов пуст</EmptyList>}
             </OrderContent>
-            <Total>
-                <span>ИТОГО</span>
-                <span>{totalCounter}</span>
-                <TotalPrice>{formatCurrency(total)}</TotalPrice>
-            </Total>
-            <ButtonCheckout onClick={() => authentication ? setOpenOrderConfirm(true) : logIn()}>Оформить</ButtonCheckout>
+            {orders.length ?
+                <>
+                    <Total>
+                        <span>ИТОГО</span>
+                        <span>{totalCounter}</span>
+                        <TotalPrice>{formatCurrency(total)}</TotalPrice>
+                    </Total>
+                    <ButtonCheckout onClick={() => authentication ? setOpenOrderConfirm(true) : logIn()}>Оформить</ButtonCheckout>
+                </> : 
+                null
+            }
         </OrderStyled>
     )
 };

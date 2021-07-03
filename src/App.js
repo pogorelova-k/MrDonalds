@@ -51,15 +51,15 @@ function App() {
       auth,
       openItem,
       orders,
-      orderConfirm
+      orderConfirm,
+      firebaseDatabase: firebase.database
     }}>
       <GlobalStyle/>
       <NavBar/>
       <Order/>
       <Menu/>
       { openItem.openItem  && <ModalItem/> }
-      {orderConfirm.openOrderConfirm && 
-        <OrderConfirm firebaseDatabase={firebase.database}/>}
+      {orderConfirm.openOrderConfirm && <OrderConfirm/>}
     </Context.Provider>
   );
 }
