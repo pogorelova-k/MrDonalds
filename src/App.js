@@ -11,6 +11,9 @@ import { useOpenItem } from './Components/Hooks/useOpenItem';
 import { useOrders } from './Components/Hooks/useOrders';
 import { useAuth } from "./Components/Hooks/useAuth";
 import { useTitle } from "./Components/Hooks/useTitle";
+import { OrderConfirm } from "./Components/Order/OrderConfirm";
+import { useOrderConfirm } from "./Components/Hooks/useOrderConfirm";
+import { Context } from "./Components/Functions/context";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAuAoYsTw4OKDWi6q4_hEtDtrfe0iGXt1Y",
@@ -37,21 +40,27 @@ function App() {
   // authentication
   const auth = useAuth(firebase.auth);
 
+  // открытие заказа по кнопке оформить
+  const orderConfirm = useOrderConfirm();
+
   // измение title при открытие товара из меню
   useTitle(openItem.openItem);
 
   return (
-    <>
+    <Context.Provider value={{
+      auth,
+      openItem,
+      orders,
+      orderConfirm
+    }}>
       <GlobalStyle/>
-      <NavBar {...auth}/>
-      <Order 
-        {...orders} 
-        {...openItem} 
-        {...auth}
-        firebaseDatabase={firebase.database}/>
-      <Menu {...openItem}/>
-      { openItem.openItem  && <ModalItem {...openItem} {...orders}/> }
-    </>
+      <NavBar/>
+      <Order/>
+      <Menu/>
+      { openItem.openItem  && <ModalItem/> }
+      {orderConfirm.openOrderConfirm && 
+        <OrderConfirm firebaseDatabase={firebase.database}/>}
+    </Context.Provider>
   );
 }
 

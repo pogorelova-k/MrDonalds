@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from 'styled-components';
 import { ButtonCheckout } from "../Button/ButtonCheckout";
 import { OrderListItem } from "./OrderListItem";
 import { totalPriceItems } from '../Functions/secondaryFunction';
 import { formatCurrency } from "../Functions/secondaryFunction";
-import { projection } from "../Functions/secondaryFunction";
+import { Context } from "../Functions/context";
 
 const OrderStyled = styled.section`
     position: fixed;
@@ -20,7 +20,7 @@ const OrderStyled = styled.section`
     max-width: 380px;
 `;
 
-const OrderTitle = styled.h1`
+export const OrderTitle = styled.h1`
     text-align: center;
     margin-bottom: 30px;
 `;
@@ -33,7 +33,7 @@ const OrderList = styled.ul`
 
 `;
 
-const Total = styled.div`
+export const Total = styled.div`
     display: flex;
     margin: 0 35px 30px;
     & span:first-child {
@@ -41,7 +41,7 @@ const Total = styled.div`
     }
 `; 
 
-const TotalPrice = styled.span`
+export const TotalPrice = styled.span`
     text-align: right;
     min-width: 65px;
     margin-left: 20px;
@@ -51,16 +51,14 @@ const EmptyList = styled.p`
     text-align: center;
 `;
 
-const rulesData = {
-    itemName: ['name'],
-    price: ['price'],
-    count: ['count'],
-    topping: ['topping', arr => arr.filter(obj => obj.checked).map(obj => obj.name), 
-                arr => arr.length ? arr : 'no toppings'],
-    choice: ['choice', item => item ? item : 'no choices'],
-}
 
-export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, firebaseDatabase}) => {
+
+export const Order = () => {
+
+    const {orders: { orders, setOrders },
+        openItem: { setOpenItem }, 
+        auth: { authentication, logIn },
+        orderConfirm: { setOpenOrderConfirm }} = useContext(Context);
     const total = orders.reduce((result, order) => 
         totalPriceItems(order) + result, 0)
 
@@ -74,19 +72,6 @@ export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, f
             index !== i);
         setOrders(newOrders);
     };
-
-    const dataBase = firebaseDatabase();
-
-    // функция отправки заказа
-    const sendOrder = () => {
-        const newOrder = orders.map(projection(rulesData)); // заказ
-        dataBase.ref('orders').push().set({
-            nameClient: authentication.displayName,
-            email: authentication.email,
-            order: newOrder,
-        });
-        setOrders([]);
-    }
 
     return (
         <OrderStyled>
@@ -108,7 +93,7 @@ export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, f
                 <span>{totalCounter}</span>
                 <TotalPrice>{formatCurrency(total)}</TotalPrice>
             </Total>
-            <ButtonCheckout onClick={() => authentication ? sendOrder() : logIn()}>Оформить</ButtonCheckout>
+            <ButtonCheckout onClick={() => authentication ? setOpenOrderConfirm(true) : logIn()}>Оформить</ButtonCheckout>
         </OrderStyled>
     )
 };
