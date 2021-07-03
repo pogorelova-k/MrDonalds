@@ -10,7 +10,7 @@ import { Order } from './Components/Order/Order';
 import { useOpenItem } from './Components/Hooks/useOpenItem';
 import { useOrders } from './Components/Hooks/useOrders';
 import { useAuth } from "./Components/Hooks/useAuth";
-// import { useTitle } from "./Components/Hooks/useTitle";
+import { useTitle } from "./Components/Hooks/useTitle";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAuAoYsTw4OKDWi6q4_hEtDtrfe0iGXt1Y",
@@ -37,7 +37,8 @@ function App() {
   // authentication
   const auth = useAuth(firebase.auth);
 
-  // const title = useTitle(openItem);
+  // измение title при открытие товара из меню
+  useTitle(openItem.openItem);
 
   return (
     <>
