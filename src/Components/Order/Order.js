@@ -60,7 +60,7 @@ const rulesData = {
     choice: ['choice', item => item ? item : 'no choices'],
 }
 
-export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, firebaseDatabase}) => {
+export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, database}) => {
     const total = orders.reduce((result, order) => 
         totalPriceItems(order) + result, 0)
 
@@ -75,12 +75,10 @@ export const Order = ({ orders, setOrders, setOpenItem, authentication, logIn, f
         setOrders(newOrders);
     };
 
-    const dataBase = firebaseDatabase();
-
     // функция отправки заказа
     const sendOrder = () => {
         const newOrder = orders.map(projection(rulesData)); // заказ
-        dataBase.ref('orders').push().set({
+        database.ref('orders').push().set({
             nameClient: authentication.displayName,
             email: authentication.email,
             order: newOrder,

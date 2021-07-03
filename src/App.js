@@ -11,6 +11,7 @@ import { useOpenItem } from './Components/Hooks/useOpenItem';
 import { useOrders } from './Components/Hooks/useOrders';
 import { useAuth } from "./Components/Hooks/useAuth";
 import { useTitle } from "./Components/Hooks/useTitle";
+import { useDB } from "./Components/Hooks/useDB";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAuAoYsTw4OKDWi6q4_hEtDtrfe0iGXt1Y",
@@ -40,6 +41,12 @@ function App() {
   // измение title при открытие товара из меню
   useTitle(openItem.openItem);
 
+  // получение БД
+  const database = firebase.database();
+
+  const dbMenu = useDB(database);
+  
+
   return (
     <>
       <GlobalStyle/>
@@ -48,8 +55,8 @@ function App() {
         {...orders} 
         {...openItem} 
         {...auth}
-        firebaseDatabase={firebase.database}/>
-      <Menu {...openItem}/>
+        database={database}/>
+      <Menu {...openItem} dbMenu={dbMenu}/>
       { openItem.openItem  && <ModalItem {...openItem} {...orders}/> }
     </>
   );
